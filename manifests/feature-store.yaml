@@ -2,7 +2,6 @@ apiVersion: feast.dev/v1
 kind: FeatureStore
 metadata:
   name: insurancestore
-  namespace: feast
   labels:
     feature-store-ui: enabled
 spec:
