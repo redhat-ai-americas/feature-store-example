@@ -1,0 +1,18 @@
+project: insurance_demo
+
+registry:
+  path: data/registry.db
+  cache_ttl_seconds: 60
+provider: local
+
+offline_store:
+    type: dask
+online_store:
+  type: redis
+  connection_string: "localhost:6379"
+go_feature_serving: true
+feature_server:
+  type: local
+  transformation_service_endpoint: "localhost:6569"
+
+entity_key_serialization_version: 3

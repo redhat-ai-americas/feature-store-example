@@ -1,0 +1,52 @@
+apiVersion: feast.dev/v1
+kind: FeatureStore
+metadata:
+  name: insurancestore
+  namespace: feast
+  labels:
+    feature-store-ui: enabled
+spec:
+  feastProject: insurance_demo
+  feastProjectDir:
+    git:
+      ref: main
+      url: 'https://github.com/redhat-ai-americas/feature-store-example'
+      featureRepoPath: feast/
+  services:
+    offlineStore:
+      server:
+        image: 'registry.redhat.io/rhoai/odh-feature-server-rhel9@sha256:593208494e04b7555e170a023cf78126c3714a69393a87726739d255ff9253f5'
+        envFrom:
+          - secretRef:
+              name: postgres-secret
+      persistence:
+        file:
+          type: duckdb
+          secretRef:
+            name: postgres-secret
+    onlineStore:
+      persistence:
+        store:
+          type: postgres
+          secretRef:
+            name: feast-data-stores
+      server:
+        envFrom:
+          - secretRef:
+              name: postgres-secret
+        env:
+          - name: MPLCONFIGDIR
+            value: /tmp
+    registry:
+      local:
+        persistence:
+          store:
+            secretRef:
+              name: feast-data-stores
+            type: sql
+        server:
+          logLevel: debug
+          restAPI: true
+          envFrom:
+            - secretRef:
+                name: postgres-secret
